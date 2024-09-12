@@ -1,0 +1,25 @@
+﻿<?xml version = "1.0" encoding = "UTF-8" ?>
+<Application xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:MAUIUI"
+             x:Class="MAUIUI.App">
+    <Application.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Resources/Styles/Colors.xaml" />
+                <ResourceDictionary Source="Resources/Styles/Styles.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+            <FontImage x:Key="DeleteIcon" FontFamily="FontAwesome" Glyph="&#xf2ed;" Size="22"/>
+            <FontImage x:Key="CancelIcon" FontFamily="FontAwesome" Glyph="&#xf05e;" Size="22"/>
+            <FontImage x:Key="SaveIcon" FontFamily="FontAwesome" Glyph="&#xf0c7;" Size="22"/>
+            <FontImage x:Key="AddIcon" FontFamily="FontAwesome" Glyph="&#x2b;" Size="22"/>
+            <ResourceDictionary>
+                <Color x:Key="AssignedColor">#0d6efd</Color>
+                <Color x:Key="InProgressColor">#ffc107</Color>
+                <Color x:Key="SuspendedColor">#6c757d</Color>
+                <Color x:Key="CompletedColor">#198754</Color>
+                <Color x:Key="NotAssignedColor">#dc3545</Color>
+            </ResourceDictionary>
+        </ResourceDictionary>
+    </Application.Resources>
+</Application>

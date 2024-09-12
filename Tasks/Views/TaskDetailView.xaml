@@ -1,0 +1,121 @@
+﻿<UserControl x:Class="Tasks.Views.TaskDetailView"
+		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+		xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+		xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+		xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+		xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+		xmlns:local="clr-namespace:Tasks.Views"
+        xmlns:prism="http://prismlibrary.com/"
+		mc:Ignorable="d"
+        prism:ViewModelLocator.AutoWireViewModel="True">
+
+    <prism:Dialog.WindowStyle>
+        <Style TargetType="{x:Type prism:DialogWindow}" BasedOn="{StaticResource MaterialDesignWindow}">
+            <Setter Property="ResizeMode" Value="NoResize"/>
+            <Setter Property="SizeToContent" Value="WidthAndHeight"/>
+        </Style>
+    </prism:Dialog.WindowStyle>
+    <Grid>
+        <StackPanel Orientation="Vertical">
+			<TextBox
+                Margin="20 10 20 5"
+				Text="{Binding ToDo.Title, Mode=TwoWay}"
+				VerticalAlignment="Top"
+				materialDesign:HintAssist.Hint="Наименование задачи"
+				AcceptsReturn="True"
+				Style="{StaticResource MaterialDesignFilledTextBox}"/>
+			<TextBox
+                Margin="20 5 20 5"
+				Text="{Binding ToDo.Description, Mode=TwoWay}"
+				VerticalAlignment="Top"
+				materialDesign:HintAssist.Hint="Описание задачи"
+				AcceptsReturn="True"
+				Style="{StaticResource MaterialDesignFilledTextBox}"/>
+			<TextBox
+                Margin="20 5 20 5"
+				Text="{Binding ToDo.Executors, Mode=TwoWay}"
+				VerticalAlignment="Top"
+				materialDesign:HintAssist.Hint="Назначенный исполнитель"
+				AcceptsReturn="True"
+				Style="{StaticResource MaterialDesignFilledTextBox}"/>
+			<DockPanel LastChildFill="True" Margin="20 5 20 5">
+				<TextBlock
+					Width="150"
+                    VerticalAlignment="Center"
+					Text="Статус задачи:" />
+                <ComboBox
+                    ItemsSource="{Binding Statuses}"
+                    DisplayMemberPath="StatusName"
+                    SelectedValue="{Binding ToDo.Status.Id, Mode=TwoWay}"
+                    SelectedValuePath="Id"
+					HorizontalContentAlignment="Left" />
+            </DockPanel>
+            <DockPanel LastChildFill="True" Margin="20 5 20 5">
+                <TextBlock
+                    Height="25"
+                    VerticalAlignment="Bottom"
+					Width="150"
+					Text="Трудозатраты (план):" />
+				<materialDesign:NumericUpDown
+					Value="{Binding ToDo.PlannedDuration}"
+                    HorizontalContentAlignment="Left" />
+			</DockPanel>
+            <DockPanel VerticalAlignment="Center" Margin="20 5 20 10">
+                <TextBlock
+                    Width="150"
+					Text="Трудозатраты (факт):" />
+                <TextBlock
+                    Padding="5 0 0 0"
+					FontWeight="Bold"
+					Text="{Binding ToDo.ActualDuration}" />
+            </DockPanel>
+            <Grid Margin="20 5 20 10" VerticalAlignment="Center" HorizontalAlignment="Center">
+                <Grid.RowDefinitions>
+                    <RowDefinition />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="auto"/>
+                    <ColumnDefinition Width="auto"/>
+                    <ColumnDefinition Width="105"/>
+                    <ColumnDefinition Width="auto"/>
+                    <ColumnDefinition Width="auto"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock
+                    Padding="5 0 5 0"
+                    Grid.Column="0"
+					Text="Начало:" />
+                <TextBlock
+                    FontWeight="Bold"
+                    Padding="5 0 5 0"
+                    Grid.Column="1"
+					Text="{Binding ToDo.Start, StringFormat=d, ConverterCulture=ru-RU}" />
+                <TextBlock
+                    Padding="5 0 5 0"
+                    Grid.Column="3"
+					Text="Завершение:" />
+                <TextBlock
+                    FontWeight="Bold"
+                    Padding="5 0 5 0"
+                    Grid.Column="4"
+					Text="{Binding ToDo.Finish, StringFormat=d, ConverterCulture=ru-RU, TargetNullValue='---'}" />
+            </Grid>
+            <DockPanel VerticalAlignment="Center" Margin="20 5 20 10">
+                <UniformGrid Columns="3" Rows="1" VerticalAlignment="Center" HorizontalAlignment="Center">
+                    <Button
+                        Width="120"
+						Margin="10"
+						Content="СОХРАНИТЬ"
+						Style="{StaticResource MaterialDesignPaperButton}"
+                        Command="{Binding SaveCommand}"/>
+                    <TextBlock />
+                    <Button
+                        Width="120"
+						Margin="10"
+						Content="ОТМЕНА"
+						Style="{StaticResource MaterialDesignPaperSecondaryButton}"
+                        Command="{Binding CancelCommand}"/>
+                </UniformGrid>
+            </DockPanel>
+        </StackPanel>
+	</Grid>
+</UserControl>

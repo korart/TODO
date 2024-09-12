@@ -133,16 +133,16 @@
     <value>Невозможно установить для задачи статус "Завершена", т.к. предыдущий статус должен быть "Выполняется" или "Приостановлена"</value>
   </data>
   <data name="BLExceptionValidationCreateNoTitle" xml:space="preserve">
-    <value>"Наименование" не указано</value>
+    <value>Наименование не указано</value>
   </data>
   <data name="BLExceptionValidationNullExecutors" xml:space="preserve">
-    <value>"Исполнители" не указаны</value>
+    <value>Исполнитель не назначен</value>
   </data>
   <data name="BLExceptionValidationCreateStatusIs4" xml:space="preserve">
     <value>Статус "Завершена" не может быть установлен для новой задачи</value>
   </data>
   <data name="BLExceptionValidationIncorrectStatus" xml:space="preserve">
-    <value>Статус может быть только: "Назначена", "Выполняется", "Приостановлена", "Завершена"</value>
+    <value>Статус задачи может быть только: "Назначена", "Выполняется", "Приостановлена" или "Завершена"</value>
   </data>
   <data name="BLExceptionItemNotFind" xml:space="preserve">
     <value>Задача не найдена, объект с таким id не существует</value>

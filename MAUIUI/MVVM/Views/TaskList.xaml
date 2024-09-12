@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:converters="clr-namespace:MAUIUI.Converters"
+             x:Class="MAUIUI.MVVM.Views.TaskList"
+             Title="Список задач">
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <converters:StatusColorConverter x:Key="statusColorConverter"/>
+        </ResourceDictionary>
+    </ContentPage.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <Border Stroke="#9880e5"
+                StrokeThickness="1"
+                StrokeShape="RoundRectangle 10,10,10,10"
+                Margin="15, 0"
+                HorizontalOptions="FillAndExpand">
+            <StackLayout Orientation="Horizontal" Padding="15, 0" HorizontalOptions="CenterAndExpand">
+                <Label Text="Показать:" FontSize="12" VerticalOptions="Center"/>
+                <CheckBox Color="{DynamicResource AssignedColor}" IsChecked="{Binding IsShowAssigned, Mode=TwoWay}" ToolTipProperties.Text="Назначена"/>
+                <CheckBox Color="{DynamicResource InProgressColor}" IsChecked="{Binding IsShowInProgress, Mode=TwoWay}" ToolTipProperties.Text="Выполняется"/>
+                <CheckBox Color="{DynamicResource SuspendedColor}" IsChecked="{Binding IsShowSuspended, Mode=TwoWay}" ToolTipProperties.Text="Приостановлена"/>
+                <CheckBox Color="{DynamicResource CompletedColor}" IsChecked="{Binding IsShowCompleted, Mode=TwoWay}" ToolTipProperties.Text="Завершена"/>
+            </StackLayout>
+        </Border>
+        <CollectionView Grid.Row="1" x:Name="collectionView"
+                        ItemsSource="{Binding Items}"
+                        SelectedItem="{Binding SelectedItem}"
+                        SelectionMode="Single"
+                        Margin="15, 10">
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <Border
+                        Padding="15"
+                        StrokeThickness="0"
+                        IsVisible="{Binding Show}"
+                        >
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition />
+                                <RowDefinition />
+                                <RowDefinition />
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="15" />
+                            </Grid.ColumnDefinitions>
+                            <BoxView Grid.RowSpan="3" Grid.Column="1"
+                                     BackgroundColor="{Binding Status.Id, Converter={StaticResource statusColorConverter}}"/>
+                            <Label Grid.Column="0"
+									Text="{Binding Title}"
+                                    FontAttributes="Bold"
+									FontSize="14" 
+									Padding="5, 0, 0, 5"/>
+                            <Label Grid.Column="0" Grid.Row="1"
+									Text="{Binding Description}"
+									FontSize="12" 
+									Padding="5, 0, 0, 5"/>
+                            <StackLayout Orientation="Horizontal" Grid.Column="0" Grid.Row="2" Padding="5, 0, 0, 0" >
+                                <Border BackgroundColor="DarkCyan" Padding="5" Margin="0, 0, 10, 0" StrokeShape="RoundRectangle 10,10,10,10">
+                                    <StackLayout Orientation="Horizontal">
+                                        <Label Text="{Binding Start, StringFormat='{0:dd.MM.yyyy}'}" FontSize="10"/>
+                                        <Label Text=" - " FontSize="10"/>
+                                        <Label Text="{Binding Finish, StringFormat='{0:dd.MM.yyyy}', TargetNullValue='Не завершена'}" FontSize="10"/>
+                                    </StackLayout>
+                                </Border>
+                                <Border BackgroundColor="#0d6efd" Padding="5" Margin="0, 0, 10, 0" StrokeShape="RoundRectangle 10,10,10,10">
+                                    <StackLayout Orientation="Horizontal">
+                                        <Label Text="{Binding Executors, TargetNullValue='Не назначен'}" FontSize="10"/>
+                                    </StackLayout>
+                                </Border>
+                            </StackLayout>
+                        </Grid>
+                    </Border>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+        <ImageButton 
+			Source="add.png"
+            Grid.Row="2"
+			Margin="0, 0, 15, 15"
+			HorizontalOptions="End"
+			VerticalOptions="End"
+			CornerRadius="10"
+            BackgroundColor="LimeGreen"
+            Command="{Binding AddItemCommand}"
+			/>
+    </Grid>
+</ContentPage>

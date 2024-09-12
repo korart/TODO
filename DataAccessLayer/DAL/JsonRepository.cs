@@ -1,20 +1,26 @@
 ﻿using Model.Domain;
+using System.Collections.Generic;
+using System.Text.Encodings.Web;
 using System.Text.Json;
+using System.Text.Unicode;
 
 namespace Model.DAL
 {
 	public class JsonRepository<T> : IRepository<T> where T : class, IDomainObject, new()
 	{
+		private static int autoId;
+
 		private List<T> items;
-		private string fileName = "TodoItems.json";
+		private string fileName = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "TodoItems.json");
 		public JsonRepository()
 		{
 			LoadData();
 			items ??= [];
+			autoId = items.Count + 1;
 
 		}
 
-		public void Create(T item)
+		public T Create(T item)
 		{
 			if (this.Read(item.Id) != null)
 			{
@@ -23,21 +29,24 @@ namespace Model.DAL
 			}
 			else
 			{
+				item.Id = autoId++;
 				items.Add(item);
-				this.SaveData();
+				this.SaveAll();
+				return item;
 			}
 		}
 
-		public void Delete(T item)
+		public void Delete(int id)
 		{
-			if (this.Read(item.Id) == null)
+			T? item = this.Read(id);
+			if (item == null)
 			{
 				throw new RepositoryException(Strings.ResourceManager.GetString("RepositoryExceptionDelete") ?? "");
 			}
 			else
 			{
 				items.Remove(item);
-				this.SaveData();
+				this.SaveAll();
 			}
 		}
 
@@ -60,7 +69,7 @@ namespace Model.DAL
 				{
 					items.Remove(value);
 					items.Add(item);
-					this.SaveData();
+					this.SaveAll();
 					isInRepository = true;
 					break;
 				}
@@ -69,6 +78,34 @@ namespace Model.DAL
 			{
 				throw new RepositoryException(Strings.ResourceManager.GetString("RepositoryExceptionUpdate") ?? "");
 			}
+		}
+
+		public void SaveAll(IEnumerable<T>? externalData = null)
+		{
+			if (externalData == null)
+			{
+				externalData = items;
+			}
+			try
+			{
+				string json = Serialize(externalData);
+				File.WriteAllText(fileName, json);
+			}
+			catch (Exception ex)
+			{
+				throw new ApplicationException(ex.Message, ex);
+			}
+		}
+
+		private static readonly JsonSerializerOptions s_writeOptions = new()
+		{
+			Encoder = JavaScriptEncoder.Create(UnicodeRanges.BasicLatin, UnicodeRanges.All),
+			WriteIndented = true
+		};
+
+		static string Serialize<K>(K value)
+		{
+			return JsonSerializer.Serialize(value, s_writeOptions);
 		}
 
 		private void LoadData()
@@ -83,12 +120,6 @@ namespace Model.DAL
 				items = [];
 			}
 
-		}
-
-		private void SaveData()
-		{
-			string json = JsonSerializer.Serialize(items);
-			File.WriteAllText(fileName, json);
 		}
 	}
 }

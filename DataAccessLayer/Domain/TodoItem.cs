@@ -8,7 +8,23 @@
 		public string? Executors { get; set; }
 		public int Status { get; set; }
 		public int PlannedDuration { get; set; }
-		public int ActualDuration { get; set; }
+		public int ActualDuration
+		{
+			get
+			{
+				TimeSpan diff;
+				if (Finish is not null)
+				{
+
+					diff = (TimeSpan)(Finish - Start)!;
+				}
+				else
+				{
+					diff = (TimeSpan)(DateTime.Now - Start)!;
+				}
+				return (int)((diff.TotalDays + 1) * 2);
+			}
+		}
 		public DateTime? Start { get; set; }
 		public DateTime? Finish { get; set; }
 

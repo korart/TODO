@@ -1,0 +1,46 @@
+[
+  {
+    "Id": 1,
+    "Title": "Домашнее задание No5",
+    "Description": "Реализовать работу с SQLite через Dapper и EF",
+    "Executors": "Андрей Петрович",
+    "Status": 4,
+    "PlannedDuration": 5,
+    "ActualDuration": 0,
+    "Start": "2024-08-11T11:19:53.551932+03:00",
+    "Finish": "2024-08-11T15:48:39.1154398+03:00"
+  },
+  {
+    "Id": 2,
+    "Title": "Домашнее задание No7",
+    "Description": "Cтруктурные паттерны: Builder и Decorator, порождающий паттерн - FactoryMethod",
+    "Executors": "",
+    "Status": 3,
+    "PlannedDuration": 5,
+    "ActualDuration": 0,
+    "Start": "2024-08-14T11:19:53.551932+03:00",
+    "Finish": null
+  },
+  {
+    "Id": 3,
+    "Title": "Домашнее задание No8",
+    "Description": "Паттерн Стратегия (Strategy), Состояние (State), Паттерн Хранитель (Memento)",
+    "Executors": "Дарья Степанова",
+    "Status": 3,
+    "PlannedDuration": 5,
+    "ActualDuration": 0,
+    "Start": "2024-08-15T11:19:53.551932+03:00",
+    "Finish": null
+  },
+  {
+    "Id": 4,
+    "Title": "Подготовка финального проекта",
+    "Description": "Информационная система  'Управление задачами'",
+    "Executors": "Николай П.",
+    "Status": 2,
+    "PlannedDuration": 15,
+    "ActualDuration": 0,
+    "Start": "2024-08-20T11:19:53.551932+03:00",
+    "Finish": null
+  }
+]

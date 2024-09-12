@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="MAUIUI.MVVM.Views.TaskDetail"
+             Title="{Binding PageTitle}">
+    <Shell.BackButtonBehavior>
+        <BackButtonBehavior Command="{Binding CancelCommand}" />
+    </Shell.BackButtonBehavior>
+    <Grid Padding="10, 0, 0, 10">
+        <StackLayout Padding="14">
+            <Label Text="Наименование задачи" Margin="0, 0, 0, 5"/>
+            <Entry Text="{Binding Todo.Title}" Margin="0, 0, 0, 15"/>
+            <Label Text="Описание задачи" Margin="0, 0, 0, 5"/>
+            <Entry Text="{Binding Todo.Description}" Margin="0, 0, 0, 15"/>
+            <Label Text="Исполнитель" Margin="0, 0, 0, 5"/>
+            <Entry Text="{Binding Todo.Executors}" Margin="0, 0, 0, 15"/>
+            <StackLayout Orientation="Horizontal" Margin="0, 0, 0, 15">
+                <Label Text="Трудозатраты (план)" Margin="0, 0, 10, 0" VerticalOptions="Center"/>
+                <Entry BindingContext="{x:Reference _stepper}"
+                       Text="{Binding Value}"
+                       IsReadOnly="True"
+                       MinimumHeightRequest="25"
+                       MinimumWidthRequest="100"
+                       HorizontalTextAlignment="End"
+                       Margin="0, 0, 10, 0"/>
+                <Stepper x:Name="_stepper"
+                         Minimum ="0"
+                         Maximum="500"
+                         Increment ="1"
+                         MinimumHeightRequest="25"
+                         Value="{Binding Todo.PlannedDuration}"
+                         VerticalOptions = "Start"/>
+            </StackLayout>
+            <StackLayout Orientation="Horizontal"  Margin="0, 0, 0, 15" >
+                <Label Text="Трудозатраты (факт)" Margin="0, 0, 10, 0" VerticalOptions="Center"/>
+                <Entry 
+                    Text="{Binding Todo.ActualDuration}"
+                    IsReadOnly="True"
+                    MinimumHeightRequest="25"
+                    MinimumWidthRequest="100"
+                    HorizontalTextAlignment="End"
+                    Margin="0, 0, 10, 0"/>
+            </StackLayout>
+            <StackLayout Orientation="Horizontal" >
+                <Label Text="Статус" Margin="0, 0, 10, 0" VerticalOptions="Center"/>
+                <Picker
+                    x:Name="StatusPicker"
+                    HorizontalOptions="FillAndExpand"
+                    ItemsSource="{Binding Statuses}"
+                    ItemDisplayBinding="{Binding StatusName}"
+                    SelectedItem="{Binding Todo.Status}"
+                    />
+            </StackLayout>
+        </StackLayout>
+        <ImageButton 
+            Source="cancel.png"
+            ToolTipProperties.Text="Отменить"
+            Margin="15"
+            HorizontalOptions="Start"
+            VerticalOptions="End"
+            CornerRadius="10"
+            BackgroundColor="Orange"
+            Command="{Binding CancelCommand}"
+            MinimumWidthRequest="50"
+        />
+        <ImageButton 
+            Source="save.png"
+            ToolTipProperties.Text="Сохранить"
+            Margin="15"
+            HorizontalOptions="Center"
+            VerticalOptions="End"
+            CornerRadius="10"
+            BackgroundColor="LimeGreen"
+            Command="{Binding SaveItemCommand}"
+            MinimumWidthRequest="150"
+        />
+        <ImageButton 
+            Source="delete.png"
+            ToolTipProperties.Text="Удалить"
+            Margin="15"
+            HorizontalOptions="End"
+            VerticalOptions="End"
+            CornerRadius="10"
+            BackgroundColor="Red"
+            IsVisible="{Binding CanDelete}"
+            Command="{Binding DeleteItemCommand}"
+            MinimumWidthRequest="50"
+        />
+    </Grid>
+</ContentPage>
