@@ -1,0 +1,155 @@
+﻿@using BlazorUI.Services
+
+@inject IServiceProvider serviceProvider
+@inject ModalService ModalService
+@inject NavigationManager navigationManager
+
+<div class="px-4 d-flex justify-content-start">
+	<Button Color="ButtonColor.Success" @onclick="AddItem"><Icon Name="@IconName.Plus" />Добавить задачу</Button>
+</div>
+<div class="m-4">
+	<Grid @ref="grid"
+		  TItem="TodoItemDTO"
+		  Style="font-size:smaller"
+		  Data="todoItems"
+		  AllowSorting="true"
+		  AllowFiltering="true"
+		  AllowPaging="false"
+		  ItemsPerPageText="Строк на странице"
+		  PageSizeSelectorItems="[5, 10]"
+		  PaginationItemsTextFormat="1"
+		  Class="table table-hover table-bordered "
+		  HeaderRowCssClass="bg-primary text-white border-bottom-0"
+		  FiltersRowCssClass="bg-primary text-white bg-opacity-25 border-bottom-0"
+		  FiltersTranslationProvider="translationProvider"
+		  RowClass="GetRowClass"
+		  Responsive="true">
+		<GridColumn TItem="TodoItemDTO" HeaderText="Название" PropertyName="Title" SortKeySelector="item => item.Title">
+			@context.Title
+		</GridColumn>
+		<GridColumn TItem="TodoItemDTO" HeaderText="Описание" PropertyName="Description">
+			@context.Description
+		</GridColumn>
+		<GridColumn TItem="TodoItemDTO" HeaderText="Исполнитель" PropertyName="Executors" SortKeySelector="item => item.Executors" ColumnClass="@(x => x.Executors == null ? "table-danger" : string.Empty)">
+			@if (context.Executors == null)
+			{
+				@nullExecutor
+			}
+			else
+			{
+				@context.Executors
+			}
+		</GridColumn>
+		<GridColumn TItem="TodoItemDTO" HeaderText="Статус" PropertyName="Status" SortKeySelector="item => item.Status" HeaderTextAlignment="Alignment.Center">
+			@context.Status
+		</GridColumn>
+		<GridColumn TItem="TodoItemDTO" HeaderText="Старт" PropertyName="Start" Filterable="false" HeaderTextAlignment="Alignment.Center" TextAlignment="Alignment.Center">
+			@context.Start
+		</GridColumn>
+		<GridColumn TItem="TodoItemDTO" HeaderText="Финиш" PropertyName="Finish" Filterable="false" HeaderTextAlignment="Alignment.Center" TextAlignment="Alignment.Center">
+			@context.Finish
+		</GridColumn>
+		<GridColumn TItem="TodoItemDTO" HeaderText="Действия" Filterable="false">
+			<Button Color="ButtonColor.Primary" Size="Size.Small" @onclick="() => EditItem(context)"><Icon Name="@IconName.Pencil" /></Button>
+			<Button Color="ButtonColor.Danger" Size="Size.Small" @onclick="() => DeleteItemAsync(context)"><Icon Name="@IconName.Trash" /></Button>
+		</GridColumn>
+	</Grid>
+</div>
+
+<ConfirmDialog @ref="dialog" />
+
+<Offcanvas @ref="offcanvas" OnHidden="OnOffcanvasHidden" />
+
+@code {
+	private ConfirmDialog dialog = default!;
+	private Offcanvas offcanvas = default!;
+	Grid<TodoItemDTO> grid = default!;
+
+	private List<TodoItemDTO> todoItems;
+	private TodoItemDTO selectedItem;
+	private TodoItemService dataService;
+	private AppState appState;
+	private BlazorBootstrap.GridFiltersTranslationDelegate translationProvider;
+	private string nullExecutor = "Не назначен";
+
+
+	protected override async Task OnInitializedAsync()
+	{
+		translationProvider = serviceProvider.GetRequiredService<GridFiltersTranslationService>().GridFiltersTranslationProvider;
+		dataService = serviceProvider.GetRequiredService<TodoItemService>();
+		appState = serviceProvider.GetRequiredService<AppState>();
+		todoItems = await dataService.GetTodoItemsAsync();
+	}
+
+	private async Task DeleteItemAsync(TodoItemDTO item)
+	{
+		selectedItem = item;
+		var options = new ConfirmDialogOptions
+			{
+				HeaderCssClass = "danger-header",
+				IsVerticallyCentered = true,
+				YesButtonText = "Удалить",
+				YesButtonColor = ButtonColor.Danger,
+				NoButtonText = "Отмена",
+				NoButtonColor = ButtonColor.Secondary
+			};
+		var confirmation = await dialog.ShowAsync(
+			title: "Вы хотите удалить задачу?",
+			message1: "Данное действие удалит задачу из спиcка. После удаления операция не может быть отменена.",
+			message2: "Продолжить?",
+			confirmDialogOptions: options);
+
+		if (confirmation)
+		{
+			try
+			{
+				await dataService.DeleteTodoItemAsync(selectedItem);
+			}
+			catch (ApplicationException ex)
+			{
+				await ModalService.ShowAsync(new ModalOption
+					{
+						Title = "Ошибка!",
+						Message = ex.Message,
+						Type = ModalType.Danger,
+					});
+			}
+			todoItems.Remove(selectedItem);
+			await grid.RefreshDataAsync();
+		}
+	}
+
+	private async Task AddItem()
+	{
+		appState.Todo = new TodoItemDTO();
+		appState.Todo.Status = "Приостановлена";
+		appState.ChildPageTitle = "Новая задача";
+		// await offcanvas.ShowAsync<ItemDetailsComponent>(title: "Новая задача");
+		navigationManager.NavigateTo("/details");
+	}
+
+	private async Task EditItem(TodoItemDTO item)
+	{
+		appState.Todo = item.Clone();
+		appState.ChildPageTitle = "Редактирование задачи";
+		// await offcanvas.ShowAsync<ItemDetailsComponent>(title: "Редактирование задачи");
+		navigationManager.NavigateTo("/details");
+	}
+
+	private void OnOffcanvasHidden()
+	{
+		appState.Todo = null;
+	}
+
+	private string GetRowClass(TodoItemDTO todo)
+	{
+		return todo.Status switch
+		{
+			"Завершена" => "table-success",
+			"Назначена" => "table-primary",
+			"Приостановлена" => "table-info",
+			"Выполняется" => "table-warning",
+			_ => string.Empty
+		};
+	}
+}

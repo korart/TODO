@@ -17,7 +17,7 @@ namespace Tasks
 
 		protected override void RegisterTypes(IContainerRegistry containerRegistry)
 		{
-			containerRegistry.RegisterSingleton<IRepository<TodoItem>, JsonRepository<TodoItem>>();
+			containerRegistry.RegisterSingleton<IRepository<TodoItem>, MSSQLRepository>();
 			containerRegistry.RegisterSingleton<IModel, CachedModel>();
 			containerRegistry.RegisterDialog<TaskDetailView, TaskDetailViewModel>();
 		}

@@ -1,0 +1,120 @@
+﻿@page "/details"
+
+@using Model.Domain
+@using Services
+@using System.Diagnostics
+
+@inject IServiceProvider serviceProvider
+@inject NavigationManager navigationManager
+@inject ModalService ModalService
+
+<PageTitle>Управление задачами - @title</PageTitle>
+
+<div class="container">
+	<Card>
+		<CardHeader>
+			@title
+		</CardHeader>
+		<CardBody>
+			<div class="form-group row mb-3">
+				<label class="col-md-2 col-form-label">Наименование:</label>
+				<div class="col-md-10">
+					<InputText class="form-control" @bind-Value="todoItem.Title" />
+				</div>
+			</div>
+			<div class="form-group row mb-3">
+				<label class="col-md-2 col-form-label">Описание:</label>
+				<div class="col-md-10">
+					<InputText class="form-control" @bind-Value="todoItem.Description" />
+				</div>
+			</div>
+			<div class="form-group row mb-3">
+				<label class="col-md-2 col-form-label">Исполнитель:</label>
+				<div class="col-md-10">
+					<InputText class="form-control" @bind-Value="todoItem.Executors" />
+				</div>
+			</div>
+			<div class="form-group row mb-3">
+				<label class="col-md-2 col-form-label">Статус:</label>
+				<div class="col-md-10">
+					<InputSelect TValue="string" class="form-control" @bind-Value="todoItem.Status">
+						@foreach (var status in statuses)
+						{
+							<option value="@status">@status</option>
+						}
+					</InputSelect>
+				</div>
+			</div>
+			<div class="form-group row mb-3">
+				<label class="col-md-2 col-form-label">Трудозатраты (план):</label>
+				<div class="col-md-10">
+					<NumberInput TValue="int" EnableMinMax="true" Min="0" Max="1000" class="form-control" @bind-Value="todoItem.PlannedDuration" />
+				</div>
+			</div>
+			<div class="form-group row mb-3">
+				<label class="col-md-2 col-form-label">Трудозатраты (факт):</label>
+				<div class="col-md-10">
+					<NumberInput Disabled="true" class="form-control" @bind-Value="todoItem.ActualDuration" />
+				</div>
+			</div>
+			<div class="form-group row mb-3">
+				<label class="col-md-2 col-form-label">Дата начала:</label>
+				<div class="col-md-10">
+					<DateInput Disabled="true" class="form-control" @bind-Value="todoItem.Start" />
+				</div>
+			</div>
+			<div class="form-group row mb-3">
+				<label class="col-md-2 col-form-label">Дата завершения:</label>
+				<div class="col-md-10">
+					<DateInput Disabled="true" class="form-control" @bind-Value="todoItem.Finish" />
+				</div>
+			</div>
+			<div class="row mb-3">
+				<div class="col-md-2 d-flex justify-content-center">
+					<Button Color="ButtonColor.Success" @onclick="SaveItem">Сохранить</Button>
+				</div>
+				<div class="col-md-8 d-flex justify-content-center" />
+				<div class="col-md-2 d-flex justify-content-center">
+					<Button Color="ButtonColor.Warning" To="/" Type="ButtonType.Link">Отмена</Button>
+				</div>
+			</div>
+		</CardBody>
+	</Card>
+</div>
+
+<Modal IsServiceModal="true" />
+
+@code {
+	private string title;
+	private TodoItemDTO todoItem;
+	private AppState appState;
+	private List<string> statuses = ["Назначена", "Выполняется", "Приостановлена", "Завершена"];
+	private TodoItemService dataService;
+
+	protected override async Task OnInitializedAsync()
+	{
+		appState = serviceProvider.GetRequiredService<AppState>();
+		dataService = serviceProvider.GetRequiredService<TodoItemService>();
+		todoItem = appState.Todo;
+		title = appState.ChildPageTitle;
+	}
+
+	private async Task SaveItem()
+	{
+		try
+		{
+			await dataService.SaveTodoItemAsync(todoItem);
+			navigationManager.NavigateTo("/");
+		}
+		catch (ApplicationException ex)
+		{
+			await ModalService.ShowAsync(new ModalOption
+				{
+					Title = "Ошибка!",
+					Message = ex.Message,
+					Type = ModalType.Danger,
+					IsVerticallyCentered = true
+				});
+		}
+	}
+}

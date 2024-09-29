@@ -25,7 +25,7 @@ namespace MAUIUI
 
 		public static MauiAppBuilder RegisterServices(this MauiAppBuilder mauiAppBuilder)
 		{
-			mauiAppBuilder.Services.AddSingleton<IRepository<TodoItem>, JsonRepository<TodoItem>>();
+			mauiAppBuilder.Services.AddSingleton<IRepository<TodoItem>, MSSQLRepository>();
 			mauiAppBuilder.Services.AddSingleton<IModel, CachedModel>();
 			return mauiAppBuilder;
 		}

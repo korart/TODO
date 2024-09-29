@@ -1,0 +1,8 @@
+/* Add application specific styles here */
+.todo-header {
+    background-color: #094cb0;
+}
+.danger-header {
+    background-color: #dc3545;
+    color: white;
+}
