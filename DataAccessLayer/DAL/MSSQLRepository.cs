@@ -5,12 +5,9 @@ namespace Model.DAL
 	public class MSSQLRepository : IRepository<TodoItem>
 	{
 		private DatabaseContext db;
-		//private static int autoId;
 		public MSSQLRepository()
         {
             db = new DatabaseContext();
-			//TodoItem? lastTodoItem = db.TodoItems.OrderByDescending(u => u.Id).FirstOrDefault();
-			//autoId = lastTodoItem == null ? 1 : lastTodoItem.Id + 1;
         }
         public TodoItem Create(TodoItem item)
 		{
@@ -21,7 +18,6 @@ namespace Model.DAL
 			}
 			else
 			{
-				//item.Id = autoId++;
 				db.TodoItems.Add(item);
 				db.SaveChanges();
 				return item;
