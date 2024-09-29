@@ -6,10 +6,10 @@ namespace Model.DAL
 	{
 		private DatabaseContext db;
 		public MSSQLRepository()
-        {
-            db = new DatabaseContext();
-        }
-        public TodoItem Create(TodoItem item)
+		{
+			db = new DatabaseContext();
+		}
+		public TodoItem Create(TodoItem item)
 		{
 			if (this.Read(item.Id) != null)
 			{
